@@ -65,11 +65,15 @@ public final class HistoryRecyclerFragment extends Fragment {
      * @param historyManager
      * хранит в себе истории - экземпляры класса History в виде списка
      */
-    
+
     @SuppressLint("ValidFragment")
     public HistoryRecyclerFragment(final HistoryManager historyManager) {
         this.historyManager = historyManager;
     }
+
+    /**
+     * onCreateView() - стандартный метод, инициализирующий View из XML файла
+     */
 
     @Nullable
     @Override
@@ -78,8 +82,16 @@ public final class HistoryRecyclerFragment extends Fragment {
         return inflater.inflate(R.layout.recycler_layout, container, false);
     }
 
+    /**
+     * В методе onViewCreated() происходит настройка RecyclerView,
+     * устанавливается режим просмотра историй, инициализируется и
+     * устанавливается в RecycleView адаптер, активируется обработка
+     * жестикуляции.
+     */
+
     @Override
-    public final void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public final void onViewCreated(final @NonNull View view
+            , final @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.configureRecyclerView(view.findViewById(R.id.recycler_view));
         this.recyclerFragmentMode = WATCHING;
@@ -88,12 +100,23 @@ public final class HistoryRecyclerFragment extends Fragment {
         this.setEnableGestures();
     }
 
+    /**
+     * configureRecyclerView(final RecyclerView recyclerView) -
+     * - настраивает RecycleView.
+     * @param recyclerView, который нужно настроить
+     */
+
     private void configureRecyclerView(final RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
         this.recyclerView.setHasFixedSize(true);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
+
+    /**
+     * createAdapter()
+     * @return обработчик событий истории.
+     */
 
     private HistoryAdapter createAdapter() {
         final HistoryAdapter adapter = new HistoryAdapter(getContext());
