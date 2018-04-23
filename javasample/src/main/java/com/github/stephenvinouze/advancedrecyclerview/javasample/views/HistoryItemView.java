@@ -5,21 +5,28 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.stephenvinouze.advancedrecyclerview.javasample.R;
 import com.github.stephenvinouze.advancedrecyclerview.javasample.models.History;
 
 /**
- * Created by Stephen Vinouze on 09/11/2015.
+ * @author Игорь Гулькин 24.04.2018
+ *
+ * Класс HistoryItemView является классом разметки
+ * для элемента истории.
  */
-public class HistoryItemView extends FrameLayout {
 
-    private TextView mIndexTextView;
+public final class HistoryItemView extends FrameLayout {
 
-    private TextView mNameTextView;
+    private TextView indexTextView;
 
-    private TextView mTickIconView;
+    private TextView nameTextView;
+
+    private TextView tickIconView;
+
+    private ImageView selectionIconView;
 
     //Конструкторы:
 
@@ -50,30 +57,22 @@ public class HistoryItemView extends FrameLayout {
 
     /**
      * @param history экземпляр класса истории;
-     * @param isToggled включен
+     * @param isToggled помечен галочкой.
      */
 
     @SuppressLint("DefaultLocale")
     public final void bind(final History history, final boolean isToggled) {
         if (history != null) {
-            this.mIndexTextView.setText(String.format("%d", history.getId()));
-            this.mNameTextView.setText(history.getName());
+            this.indexTextView.setText(String.format("%d", history.getId()));
+            this.nameTextView.setText(history.getName());
         }
-        this.mTickIconView.setVisibility(isToggled ? VISIBLE : GONE);
+        this.tickIconView.setVisibility(isToggled ? VISIBLE : GONE);
     }
 
     private void initViews() {
         final View view = inflate(getContext(), R.layout.sample_item_view, this);
-        this.mIndexTextView = view.findViewById(R.id.sample_item_index_text_view);
-        this.mNameTextView = view.findViewById(R.id.sample_item_name_text_view);
-        this.mTickIconView = view.findViewById(R.id.sample_item_name_tick_view);
-    }
-
-    public final TextView getTickIconView() {
-        return mTickIconView;
-    }
-
-    public TextView getIndexTextView() {
-        return mIndexTextView;
+        this.indexTextView = view.findViewById(R.id.sample_item_index_text_view);
+        this.nameTextView = view.findViewById(R.id.sample_item_name_text_view);
+        this.tickIconView = view.findViewById(R.id.sample_item_name_tick_view);
     }
 }
