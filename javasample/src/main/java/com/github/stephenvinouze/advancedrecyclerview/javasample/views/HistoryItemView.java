@@ -71,8 +71,18 @@ public final class HistoryItemView extends FrameLayout {
 
     private void initViews() {
         final View view = inflate(getContext(), R.layout.sample_item_view, this);
-        this.indexTextView = view.findViewById(R.id.sample_item_index_text_view);
-        this.nameTextView = view.findViewById(R.id.sample_item_name_text_view);
-        this.tickIconView = view.findViewById(R.id.sample_item_name_tick_view);
+        this.indexTextView = view.findViewById(R.id.history_item_index_text_view);
+        this.nameTextView = view.findViewById(R.id.history_item_name_text_view);
+        this.tickIconView = view.findViewById(R.id.history_item_name_tick_view);
+        this.selectionIconView = view.findViewById(R.id.history_selection_cell_view);
+    }
+
+
+    public final TextView getTickIconView() {
+        return tickIconView;
+    }
+
+    public final ImageView getSelectionIconView() {
+        return selectionIconView;
     }
 }

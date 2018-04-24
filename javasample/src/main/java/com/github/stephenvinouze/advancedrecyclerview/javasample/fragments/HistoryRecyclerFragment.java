@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,9 @@ import com.github.stephenvinouze.advancedrecyclerview.javasample.adapters.Histor
 import com.github.stephenvinouze.advancedrecyclerview.javasample.fragments.mode.RecyclerFragmentMode;
 import com.github.stephenvinouze.advancedrecyclerview.javasample.models.History;
 import com.github.stephenvinouze.advancedrecyclerview.javasample.models.HistoryManager;
+import com.github.stephenvinouze.advancedrecyclerview.javasample.views.HistoryItemView;
+
+import java.util.List;
 
 import static com.github.stephenvinouze.advancedrecyclerview.javasample.fragments.mode.RecyclerFragmentMode.EDITING;
 import static com.github.stephenvinouze.advancedrecyclerview.javasample.fragments.mode.RecyclerFragmentMode.WATCHING;
@@ -85,8 +89,7 @@ public final class HistoryRecyclerFragment extends Fragment {
     /**
      * В методе onViewCreated() происходит настройка RecyclerView,
      * устанавливается режим просмотра историй, инициализируется и
-     * устанавливается в RecycleView адаптер, активируется обработка
-     * жестикуляции.
+     * устанавливается в RecycleView адаптер.
      */
 
     @Override
@@ -97,7 +100,6 @@ public final class HistoryRecyclerFragment extends Fragment {
         this.recyclerFragmentMode = WATCHING;
         this.adapter = this.createAdapter();
         this.recyclerView.setAdapter(adapter);
-        this.setEnableGestures();
     }
 
     /**
@@ -123,23 +125,43 @@ public final class HistoryRecyclerFragment extends Fragment {
         adapter.setItems(historyManager.mockItems());
         adapter.setChoiceMode(ChoiceMode.NONE);
         adapter.setOnLongClick((view, position) -> {
+            final List<HistoryItemView> itemViews = adapter.getHistoryItemViewList();
             switch (recyclerFragmentMode) {
                 case WATCHING:
-                    //Переключились в режим редактирования:
+                    //Переключились в режим множественного выбора:
                     adapter.setChoiceMode(ChoiceMode.MULTIPLE);
                     //Поставили галочку руками:
                     adapter.getSparseBooleanArray().put(position, true);
+                    //Показали на экране ячейки выбора:
+                    for (final HistoryItemView historyItemView : itemViews){
+                        historyItemView.getSelectionIconView().setVisibility(View.VISIBLE);
+                    }
+                    //Показали всплывающее сообщение:
                     final History history = adapter.getItems().get(position);
                     this.showToast(history);
+                    //Переключлись в режим редактирования:
                     this.recyclerFragmentMode = EDITING;
+                    this.setEnableGestures();
+                    Log.i("RecyclerView", "SWITCH_TO_EDITING");
                     break;
                 case EDITING:
+                    //Для всех историй убираем галочки и ячейки:
+                    for (int i = 0; i < itemViews.size(); i++){
+                        adapter.getSparseBooleanArray().delete(i);
+                        itemViews.get(i).getTickIconView().setVisibility(View.INVISIBLE);
+                        itemViews.get(i).getSelectionIconView().setVisibility(View.INVISIBLE);
+                    }
+                    //Переключаем в режим одинарного нажатия:
+                    adapter.setChoiceMode(ChoiceMode.NONE);
                     this.recyclerFragmentMode = WATCHING;
+                    Log.i("RecyclerView", "SWITCH_TO_WATCHING");
             }
             return true;
         });
         adapter.setOnClick((view, position) -> {
-            System.out.println("GO TO HISTORY");
+            if (recyclerFragmentMode == WATCHING){
+                Log.i("RecyclerView", "GO TO HISTORY");
+            }
             return null;
         });
         return adapter;
@@ -148,8 +170,7 @@ public final class HistoryRecyclerFragment extends Fragment {
     private void setEnableGestures(){
         GestureKt.enableGestures(this.recyclerView
                 , ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT
-                , null
-        );
+                , null);
     }
 
     private void showToast(final History history){
